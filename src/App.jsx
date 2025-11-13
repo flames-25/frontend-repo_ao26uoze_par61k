@@ -1,28 +1,22 @@
-import { useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import Devices from './pages/Devices'
+import DeviceDetail from './pages/DeviceDetail'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
+function RequireAuth({children}){
+  const token = localStorage.getItem('token')
+  if(!token) return <Navigate to="/" replace />
+  return children
 }
 
-export default App
+export default function App(){
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+      <Route path="/devices" element={<RequireAuth><Devices /></RequireAuth>} />
+      <Route path="/devices/:id" element={<RequireAuth><DeviceDetail /></RequireAuth>} />
+    </Routes>
+  )
+}
